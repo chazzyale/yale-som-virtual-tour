@@ -29,6 +29,20 @@ Open http://localhost:5173 and click **Click to walk in**.
 
 **Phone / tablet:** tap **Tap to walk in**. The left-thumb joystick walks (push it all the way to sprint), dragging anywhere else looks around, and there are on-screen jump and pause buttons. On a laptop, click **Use on-screen joystick** to try the phone controls. WASD still works in that mode.
 
+## Chat with the professors (backend)
+
+`backend/` is a FastAPI app where every instructor in `data/yale_som.db` is a PydanticAI agent. Each agent's prompt is built from the database (bio, courses, times, rooms, descriptions) plus a speaking style from `backend/professors.py`, and they all share tools to search the catalog. Walk up to Prof. Zaman in Evans 2200 (MGT 409) or Prof. Schott next door in 2210 (MGT 407 Statistics, with Totoro on his shoulder), aim at them, and click to chat. They turn to look at you while you talk. Avatars share their chat behavior through `src/avatarKit.jsx`; a professor's style, greeting and researched facts live in `STYLES` in `backend/professors.py`.
+
+```bash
+cd backend
+python -m venv .venv
+.venv/Scripts/pip install -r requirements.txt   # macOS/Linux: .venv/bin/pip
+cp .env.example .env                           # add your PORTKEY_API_KEY
+.venv/Scripts/python -m uvicorn main:app --port 8001 --reload
+```
+
+Then run `npm run dev` as usual; Vite forwards `/api` to port 8001. The model is set by `OPENAI_MODEL` (default `gpt-6-luna`, called through Portkey with the Responses API). On GitHub Pages there's no backend, so the chat shows as offline.
+
 ## How it's built
 
 - `src/layout.js`: the floor plan in meters (+x east, -z north). It holds the drums, library, Beinecke, stairs, meeting rooms, wall colliders, and room lookup. Each classroom faces the courtyard, with the whiteboard and podium on the inner side and stadium-seating rows (32 cm risers) stepping up toward the outer wall; its two doors are at the front corners. You climb the center-aisle steps one riser at a time.

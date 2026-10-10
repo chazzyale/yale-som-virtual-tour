@@ -3,12 +3,13 @@ import * as THREE from 'three'
 // Lecture slides drawn on canvas, one deck per course (Yale SOM Fall 2026 MBA courses).
 // kind: 'title' | 'chart' | 'content'
 export const COURSES = {
-  mgt409: { code: 'MGT 409', name: 'AI Foundations for Managers', prof: 'Albus Dumbledore' },
+  mgt409: { code: 'MGT 409', name: 'AI Foundations for Managers', prof: 'Tauhid Zaman' },
   mgt404: { code: 'MGT 404', name: 'Basics of Economics', prof: 'Minerva McGonagall' },
   mgt403: { code: 'MGT 403', name: 'Probability Modeling & Statistics', prof: 'Sybill Trelawney' },
   mgt887: { code: 'MGT 887', name: 'Negotiations', prof: 'Horace Slughorn' },
   mgt402: { code: 'MGT 402', name: 'Basics of Accounting', prof: 'Severus Snape' },
   mgt538: { code: 'MGT 538', name: 'Mastering Influence & Persuasion', prof: 'Gilderoy Lockhart' },
+  mgt407: { code: 'MGT 407', name: 'Statistics (EMBA)', prof: 'Peter Schott' },
   mgt800: { code: 'MGT 800', name: 'Crisis Management in Tech', prof: 'Alastor Moody' },
   mgt541: { code: 'MGT 541', name: 'Corporate Finance', prof: 'Filius Flitwick' },
 }
@@ -51,6 +52,11 @@ const DECKS = {
     title: ['The Science of Yes', 'Influence without magic'],
     content: ["Cialdini's six principles", ['Reciprocity · Commitment · Social proof', 'Liking · Authority · Scarcity', 'Ethical influence builds trust', 'Signed photos are not a strategy']],
     chart: 'funnel',
+  },
+  mgt407: {
+    title: ['Regression, Explained', 'Fit the line, read the slope, check the residuals'],
+    content: ['Reading a regression', ['ŷ = β₀ + β₁x', 'β₁: change in y for one more unit of x', 'R²: share of the variance explained', 'Correlation ≠ causation. Find the shock!']],
+    chart: 'regression',
   },
   mgt800: {
     title: ['Constant Vigilance', 'Running the first 72 hours of a tech crisis'],
@@ -197,6 +203,28 @@ function drawChart(g, which) {
       g.font = '30px Georgia, serif'
       g.fillText(lab, x - g.measureText(lab).width / 2, 470)
     })
+  } else if (which === 'regression') {
+    axes()
+    // scatter around y = 0.55x with fixed pseudo-random noise, plus the fitted line
+    g.fillStyle = '#8aa4c8'
+    for (let i = 0; i < 26; i++) {
+      const x = ox + 60 + i * 34
+      const noise = Math.sin(i * 12.9898) * 43758.5453
+      const y = oy - 40 - (x - ox) * 0.42 - ((noise - Math.floor(noise)) - 0.5) * 150
+      g.beginPath()
+      g.arc(x, y, 11, 0, Math.PI * 2)
+      g.fill()
+    }
+    g.strokeStyle = PINK
+    g.lineWidth = 7
+    g.beginPath()
+    g.moveTo(ox + 30, oy - 40 - 30 * 0.42)
+    g.lineTo(1120, oy - 40 - (1120 - ox) * 0.42)
+    g.stroke()
+    g.fillStyle = INK
+    g.fillText('ŷ = β₀ + β₁x   (R² = 0.71)', ox + 20, 200)
+    g.fillText('x', 1120, 640)
+    g.fillText('y', 140, 190)
   } else if (which === 'dcf') {
     axes()
     for (let i = 0; i < 6; i++) {
